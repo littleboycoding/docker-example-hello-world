@@ -29,4 +29,4 @@ jobs:
         push: true
         
     - name: Notify via ntfy
-      run: curl -d "Build and push `ghcr.io/${{ github.repository_owner }}/hello-world:latest` successfully" ntfy.sh/gh-action-ici
+      run: curl -d "Build and push ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
