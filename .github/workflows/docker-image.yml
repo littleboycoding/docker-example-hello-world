@@ -1,8 +1,6 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: [ "master" ]
   workflow_dispatch:
     inputs:
       environment:
@@ -10,11 +8,11 @@ on:
         required: true
 
 jobs:
-
+  
   build:
-
+    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -26,7 +24,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Build/Push auth image
+    - name: Build and push
       uses: docker/build-push-action@v6
       with:
         context: .
@@ -34,4 +32,13 @@ jobs:
         push: true
         
     - name: Notify via ntfy
-      run: curl -d "Build and push ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
+      run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
+      
+    - name: Stack deploy
+      env:
+        DOCKER_HOST: ${{ secrets.SSH_HOST }}
+        IMAGE: ghcr.io/${{ github.repository_owner }}/hello-world:latest
+      run: docker stack deploy --with-registry-auth --prune -d -c ./compose.yml
+        
+    - name: Notify via ntfy
+      run: curl -d "Deployed ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully (${{ inputs.environment }})" ntfy.sh/gh-action-ici
