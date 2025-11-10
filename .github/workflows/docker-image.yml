@@ -42,9 +42,9 @@ jobs:
       
     - name: Stack deploy
       env:
-        DOCKER_HOST: ${{ secrets.SSH_HOST }}
+        # DOCKER_HOST: ${{ secrets.SSH_HOST }}
         IMAGE: ghcr.io/${{ github.repository_owner }}/hello-world:latest
-      run: docker stack deploy --with-registry-auth --prune -d -c ./compose.yml hello-world
+      run: DOCKER_HOST="${{ secrets.SSH_HOST }}" docker stack deploy --with-registry-auth --prune -d -c ./compose.yml hello-world
         
     - name: Notify via ntfy
       run: curl -d "Deployed ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully (${{ inputs.environment }})" ntfy.sh/gh-action-ici
