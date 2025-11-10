@@ -34,16 +34,20 @@ jobs:
     - name: Notify via ntfy
       run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
 
-    - uses: serversideup/github-action-docker-swarm-deploy@v4
-      with:
-        docker_compose_file_path: "compose.yml"
-        ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
-        ssh_deploy_user: "root"
-        ssh_remote_hostname: "${{ secrets.SSH_HOST }}"
-        registry: "ghcr.io"
-        registry-username: "${{ github.actor }}"
-        registry-password: "${{ secrets.GITHUB_TOKEN }}"
-        stack_name: "hello-world"
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan 167.172.85.39 > ~/.ssh/known_hosts
+        chmod 600 ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/known_hosts
+
+    - name: Stack deploy
+      env:
+        DOCKER_HOST: "ssh://root@${{ secrets.SSH_HOST }}:22"
+        IMAGE: ghcr.io/${{ github.repository_owner }}/hello-world:latest
+      run: |
+        docker stack deploy -d --prune --with-registry-auth -c compose.yml hello-world
         
     - name: Notify via ntfy
       run: curl -d "Deployed ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully (${{ inputs.environment }})" ntfy.sh/gh-action-ici
