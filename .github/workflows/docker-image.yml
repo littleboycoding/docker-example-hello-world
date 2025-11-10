@@ -34,22 +34,16 @@ jobs:
     - name: Notify via ntfy
       run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
 
-    - name: Setup SSH known_hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan 167.172.85.39 >> ~/.ssh/known_hosts
-        chmod 600 ~/.ssh/known_hosts
-        
-    - name: Setup SSH agent
-      uses: webfactory/ssh-agent@v0.9.1
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      
-    - name: Stack deploy
+    - uses: serversideup/github-action-docker-swarm-deploy@v3
       env:
-        DOCKER_HOST: ${{ secrets.SSH_HOST }}
         IMAGE: ghcr.io/${{ github.repository_owner }}/hello-world:latest
-      run: docker stack deploy --with-registry-auth --prune -d -c ./compose.yml hello-world
+      with:
+        ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+        ssh_remote_hostname: "${{ secrets.SSH_HOST }}"
+        registry: "ghcr.io"
+        registry-username: "${{ github.actor }}"
+        registry-password: "${{ secrets.GITHUB_TOKEN }}"
+        stack_name: "hello-world"
         
     - name: Notify via ntfy
       run: curl -d "Deployed ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully (${{ inputs.environment }})" ntfy.sh/gh-action-ici
