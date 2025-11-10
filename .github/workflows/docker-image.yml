@@ -46,7 +46,7 @@ jobs:
       env:
         DOCKER_HOST: "ssh://root@${{ secrets.SSH_HOST }}:22"
       run: |
-        docker stack deploy -d --prune --with-registry-auth -c compose.yml hello-world
+        docker stack deploy -d --prune -c compose.yml hello-world
         
     - name: Notify via ntfy
       run: curl -d "Deployed ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully (${{ inputs.environment }})" ntfy.sh/gh-action-ici
