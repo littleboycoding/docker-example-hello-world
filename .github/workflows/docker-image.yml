@@ -37,6 +37,7 @@ jobs:
     - uses: serversideup/github-action-docker-swarm-deploy@v4
       with:
         ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
+        ssh_deploy_user: "root"
         ssh_remote_hostname: "${{ secrets.SSH_HOST }}"
         registry: "ghcr.io"
         registry-username: "${{ github.actor }}"
