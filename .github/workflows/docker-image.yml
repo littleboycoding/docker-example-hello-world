@@ -35,8 +35,6 @@ jobs:
       run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
 
     - uses: serversideup/github-action-docker-swarm-deploy@v3
-      env:
-        IMAGE: ghcr.io/${{ github.repository_owner }}/hello-world:latest
       with:
         ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
         ssh_remote_hostname: "${{ secrets.SSH_HOST }}"
