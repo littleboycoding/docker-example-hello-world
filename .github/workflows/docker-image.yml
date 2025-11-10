@@ -33,6 +33,12 @@ jobs:
         
     - name: Notify via ntfy
       run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
+
+    - name: Setup SSH
+      run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
       
     - name: Stack deploy
       env:
