@@ -34,6 +34,12 @@ jobs:
     - name: Notify via ntfy
       run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
 
+      
+    - name: Add remote host key to known_hosts
+      uses: becherer/ssh-known-hosts@v1.2
+      with:
+        hosts: ${{ secrets.SSH_HOST }}
+
     - name: Set up SSH agent
       uses: webfactory/ssh-agent@v0.9.1
       with:
