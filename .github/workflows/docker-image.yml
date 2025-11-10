@@ -34,7 +34,7 @@ jobs:
     - name: Notify via ntfy
       run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
 
-    - uses: serversideup/github-action-docker-swarm-deploy@v3
+    - uses: serversideup/github-action-docker-swarm-deploy@v4
       with:
         ssh_deploy_private_key: "${{ secrets.SSH_PRIVATE_KEY }}"
         ssh_remote_hostname: "${{ secrets.SSH_HOST }}"
