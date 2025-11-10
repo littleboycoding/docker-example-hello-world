@@ -2,3 +2,5 @@ version: "3.8"
 services:
   web:
     image: ghcr.io/littleboycoding/hello-world:latest
+    deploy:
+      replicas: 2
