@@ -6,14 +6,10 @@ on:
       version:
         required: true
         type: string
-      environment:
-        type: environment
-        required: true
 
 jobs:
   
   build:
-    environment: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     
     steps:
@@ -31,5 +27,5 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: .
-        tags: ghcr.io/${{ github.repository_owner }}/hello-world:latest
+        tags: ghcr.io/${{ github.repository_owner }}/hello-world:${{ inputs.version }}
         push: true
