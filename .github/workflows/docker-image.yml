@@ -3,6 +3,9 @@ name: Docker Image CI
 on:
   workflow_dispatch:
     inputs:
+      version:
+        required: true
+        type: string
       environment:
         type: environment
         required: true
@@ -30,23 +33,3 @@ jobs:
         context: .
         tags: ghcr.io/${{ github.repository_owner }}/hello-world:latest
         push: true
-        
-    - name: Notify via ntfy
-      run: curl -d "Build ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully" ntfy.sh/gh-action-ici
-
-    - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        ssh-keyscan "${{ secrets.SSH_HOST }}" > ~/.ssh/known_hosts
-        chmod 600 ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/known_hosts
-
-    - name: Stack deploy
-      env:
-        DOCKER_HOST: "ssh://root@${{ secrets.SSH_HOST }}:22"
-      run: |
-        docker stack deploy -d --prune -c compose.yml hello-world
-        
-    - name: Notify via ntfy
-      run: curl -d "Deployed ghcr.io/${{ github.repository_owner }}/hello-world:latest successfully (${{ inputs.environment }})" ntfy.sh/gh-action-ici
